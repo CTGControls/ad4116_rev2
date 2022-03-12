@@ -1,6 +1,5 @@
 {
-    "configuration": "mode=on",
     "board": "arduino:megaavr:uno2018",
-    "programmer": "arduino:medbg",
-    "sketch": "ad4116_rev2.ino"
+    "sketch": "ad4116_rev2.ino",
+    "configuration": "mode=on"
 }

@@ -1,5 +1,4 @@
 #include <SPI.h>
-#include "AD4116_read.h"
 
 #define DATAOUT 11      // COPI/MOSI
 #define DATAIN 12       // CIPO/MISO
@@ -7,6 +6,9 @@
 #define CHIPSELECT 5  // SS/CS
 #define SPIMODE3 3
 
+
+
+SPIClassMegaAVR spi(DATAIN, SPICLOCK, DATAOUT, CHIPSELECT, 0);
 
 
 void setup()
@@ -177,7 +179,7 @@ uint8_t AD4116_writeChannelZeroOffset(uint8_t ChipSelectPin, uint8_t channel, ui
     return 0;
 }
 
-uint8_t AD4116_readx(uint8_t ChipSelectPin, uint8_t comms)
+uint8_t AD4116_read(uint8_t ChipSelectPin, uint8_t comms)
 {
 
     pinMode(ChipSelectPin,OUTPUT);
@@ -200,7 +202,7 @@ uint8_t AD4116_readx(uint8_t ChipSelectPin, uint8_t comms)
 }
 
 
-uint16_t AD4116_read16x(uint8_t ChipSelectPin, uint8_t comms)
+uint16_t AD4116_read16(uint8_t ChipSelectPin, uint8_t comms)
 {
 
     pinMode(ChipSelectPin,OUTPUT);
@@ -222,7 +224,7 @@ uint16_t AD4116_read16x(uint8_t ChipSelectPin, uint8_t comms)
     return results;
 }
 
-uint32_t AD4116_read24x(uint8_t ChipSelectPin, uint8_t comms)
+uint32_t AD4116_read24(uint8_t ChipSelectPin, uint8_t comms)
 {
 
     pinMode(ChipSelectPin,OUTPUT);
