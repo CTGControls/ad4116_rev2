@@ -8,7 +8,7 @@
 
 
 
-SPIClassMegaAVR spi(DATAIN, SPICLOCK, DATAOUT, CHIPSELECT, 0);
+//SPIClassMegaAVR spi(DATAIN, SPICLOCK, DATAOUT, CHIPSELECT, 0);
 
 
 void setup()
