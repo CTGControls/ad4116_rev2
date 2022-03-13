@@ -7,18 +7,26 @@
 #define spiMODE3 3
 
 
-// SPIClassMegaAVR spi(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3) = new SPIClassMegaAVR();
 
-//SPIClassMegaAVR* spi = new SPIClassMegaAVR(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3);
-
-SPIClass spi(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3);
-
-//spi = new SPIClass(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3);
+#if defined(ARDUINO_AVR_UNO)
+    SPIClass spi;
+//ARDUINO MEGA 1256
+#elif defined(ARDUINO_AVR_MEGA)
+    SPIClass spi;
+//ARDUINO MEGA 2560
+#elif defined(ARDUINO_AVR_MEGA2560)
+    SPIClass spi;
+//ARDUINO UNO WIFI
+#elif defined(ARDUINO_AVR_UNO_WIFI_DEV_ED)
+    SPIClass spi;
+//ARDUINO UNO WIFI Rev 2
+#elif defined(ARDUINO_AVR_UNO_WIFI_REV2)
+    SPIClass spi(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3);
+#endif
 
 
 void setup()
 {
-    
     // Main setting
     Serial.begin(19200);
 
@@ -36,52 +44,52 @@ void setup()
 void loop()
 {
 
-    uint16_t ID = AD4116_readID(CHIPSELECT);
-    Serial.print("ID: ");
-    Serial.println(ID, HEX);
+    // uint16_t ID = AD4116_readID(CHIPSELECT);
+    // Serial.print("ID: ");
+    // Serial.println(ID, HEX);
 
-    uint8_t STATUS = AD4116_readStatus(CHIPSELECT);
-    Serial.print("Status: ");
-    Serial.println(STATUS, BIN);
-    Serial.print("Ready: ");
-    Serial.println(bitRead(STATUS, 7));
+    // uint8_t STATUS = AD4116_readStatus(CHIPSELECT);
+    // Serial.print("Status: ");
+    // Serial.println(STATUS, BIN);
+    // Serial.print("Ready: ");
+    // Serial.println(bitRead(STATUS, 7));
 
-    uint16_t GPOIConfig = AD4116_readGPOIConfig(CHIPSELECT);
-    Serial.print("GPOIConfig: ");
-    Serial.println(GPOIConfig, BIN);
+    // uint16_t GPOIConfig = AD4116_readGPOIConfig(CHIPSELECT);
+    // Serial.print("GPOIConfig: ");
+    // Serial.println(GPOIConfig, BIN);
 
-    uint32_t ChannelOneOffsetRead1 = AD4116_read24(CHIPSELECT, 0b01110000);
-    Serial.print("ChannelOneOffsetRead1: ");
-    Serial.println(ChannelOneOffsetRead1, BIN);
+    // uint32_t ChannelOneOffsetRead1 = AD4116_read24(CHIPSELECT, 0b01110000);
+    // Serial.print("ChannelOneOffsetRead1: ");
+    // Serial.println(ChannelOneOffsetRead1, BIN);
     
-    pinMode(CHIPSELECT,OUTPUT);
+    // pinMode(CHIPSELECT,OUTPUT);
     
-    delay(50);
+    // delay(50);
     
-    spi.setBitOrder(MSBFIRST);
-    spi.setDataMode(spiMODE3);
+    // spi.setBitOrder(MSBFIRST);
+    // spi.setDataMode(spiMODE3);
     
-    digitalWrite(CHIPSELECT,LOW); //enable device
+    // digitalWrite(CHIPSELECT,LOW); //enable device
 
-    delay(150);
+    // delay(150);
 
-    spi.transfer(0b00110000);
-    if (ChannelOneOffsetRead1 == 0b10000000){
-        spi.transfer(0b10000001);
-        spi.transfer(0b00000000);
-        spi.transfer(0b00000000);
-    }else {
-        spi.transfer(0b10000000);
-        spi.transfer(0b00000000);
-        spi.transfer(0b00000000);
-    }
+    // spi.transfer(0b00110000);
+    // if (ChannelOneOffsetRead1 == 0b10000000){
+    //     spi.transfer(0b10000001);
+    //     spi.transfer(0b00000000);
+    //     spi.transfer(0b00000000);
+    // }else {
+    //     spi.transfer(0b10000000);
+    //     spi.transfer(0b00000000);
+    //     spi.transfer(0b00000000);
+    // }
     
-    digitalWrite(CHIPSELECT,HIGH); //disable device
+    // digitalWrite(CHIPSELECT,HIGH); //disable device
 
 
-    uint32_t ChannelOneOffsetRead2 = AD4116_read24(CHIPSELECT, 0b01110000);
-    Serial.print("ChannelOneOffsetRead2: ");
-    Serial.println(ChannelOneOffsetRead2, BIN);
+    // uint32_t ChannelOneOffsetRead2 = AD4116_read24(CHIPSELECT, 0b01110000);
+    // Serial.print("ChannelOneOffsetRead2: ");
+    // Serial.println(ChannelOneOffsetRead2, BIN);
 
     Serial.println("___");
 }
