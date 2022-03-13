@@ -1,5 +1,5 @@
 {
     "board": "arduino:megaavr:uno2018",
     "sketch": "ad4116_rev2.ino",
-    "configuration": "mode=on"
+    "configuration": "mode=off"
 }
