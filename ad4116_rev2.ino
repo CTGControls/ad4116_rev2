@@ -2,27 +2,33 @@
 
 #define DATAOUT 11      // COPI/MOSI
 #define DATAIN 12       // CIPO/MISO
-#define SPICLOCK 13     // SCK/CLK
+#define spiCLOCK 13     // SCK/CLK
 #define CHIPSELECT 5  // SS/CS
-#define SPIMODE3 3
+#define spiMODE3 3
 
 
+// SPIClassMegaAVR spi(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3) = new SPIClassMegaAVR();
 
-//SPIClassMegaAVR spi(DATAIN, SPICLOCK, DATAOUT, CHIPSELECT, 0);
+//SPIClassMegaAVR* spi = new SPIClassMegaAVR(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3);
+
+SPIClass spi(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3);
+
+//spi = new SPIClass(DATAIN, spiCLOCK, DATAOUT, CHIPSELECT, spiMODE3);
 
 
 void setup()
 {
+    
     // Main setting
     Serial.begin(19200);
 
     pinMode(DATAOUT, OUTPUT);
     pinMode(DATAIN, INPUT);
-    pinMode(SPICLOCK, OUTPUT);
+    pinMode(spiCLOCK, OUTPUT);
     pinMode(CHIPSELECT, OUTPUT);
     digitalWrite(CHIPSELECT, HIGH); // disable device
 
-    SPI.begin();
+    spi.begin();
 }
 
 
@@ -52,22 +58,22 @@ void loop()
     
     delay(50);
     
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setDataMode(SPIMODE3);
+    spi.setBitOrder(MSBFIRST);
+    spi.setDataMode(spiMODE3);
     
     digitalWrite(CHIPSELECT,LOW); //enable device
 
     delay(150);
 
-    SPI.transfer(0b00110000);
+    spi.transfer(0b00110000);
     if (ChannelOneOffsetRead1 == 0b10000000){
-        SPI.transfer(0b10000001);
-        SPI.transfer(0b00000000);
-        SPI.transfer(0b00000000);
+        spi.transfer(0b10000001);
+        spi.transfer(0b00000000);
+        spi.transfer(0b00000000);
     }else {
-        SPI.transfer(0b10000000);
-        SPI.transfer(0b00000000);
-        SPI.transfer(0b00000000);
+        spi.transfer(0b10000000);
+        spi.transfer(0b00000000);
+        spi.transfer(0b00000000);
     }
     
     digitalWrite(CHIPSELECT,HIGH); //disable device
@@ -186,15 +192,15 @@ uint8_t AD4116_read(uint8_t ChipSelectPin, uint8_t comms)
     
     delay(50);
     
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setDataMode(SPIMODE3);
+    spi.setBitOrder(MSBFIRST);
+    spi.setDataMode(spiMODE3);
     
     digitalWrite(ChipSelectPin,LOW); //enable device
 
     delay(150);
 
-    SPI.transfer(comms);
-    uint8_t results = SPI.transfer(0x00);
+    spi.transfer(comms);
+    uint8_t results = spi.transfer(0x00);
     
     digitalWrite(ChipSelectPin,HIGH); //disable device
 
@@ -209,15 +215,15 @@ uint16_t AD4116_read16(uint8_t ChipSelectPin, uint8_t comms)
     
     delay(50);
     
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setDataMode(SPIMODE3);
+    spi.setBitOrder(MSBFIRST);
+    spi.setDataMode(spiMODE3);
     
     digitalWrite(ChipSelectPin,LOW); //enable device
 
     delay(150);
 
-    SPI.transfer(comms);
-    uint16_t results = SPI.transfer16(0x00);
+    spi.transfer(comms);
+    uint16_t results = spi.transfer16(0x00);
     
     digitalWrite(ChipSelectPin,HIGH); //disable device
 
@@ -231,17 +237,17 @@ uint32_t AD4116_read24(uint8_t ChipSelectPin, uint8_t comms)
     
     delay(50);
     
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setDataMode(SPIMODE3);
+    spi.setBitOrder(MSBFIRST);
+    spi.setDataMode(spiMODE3);
     
     digitalWrite(ChipSelectPin,LOW); //enable device
 
     delay(150);
 
-    SPI.transfer(comms);
-    uint32_t resultsW1 = SPI.transfer(0x00);
-    uint32_t resultsW2 = SPI.transfer(0x00);
-    uint32_t resultsW3 = SPI.transfer(0x00);
+    spi.transfer(comms);
+    uint32_t resultsW1 = spi.transfer(0x00);
+    uint32_t resultsW2 = spi.transfer(0x00);
+    uint32_t resultsW3 = spi.transfer(0x00);
     
     digitalWrite(ChipSelectPin,HIGH); //disable device
 
