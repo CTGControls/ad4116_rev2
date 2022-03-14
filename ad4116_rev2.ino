@@ -1,4 +1,5 @@
 #include <SPI.h>
+#include "AD4116_read.h"
 
 #define DATAOUT 11      // COPI/MOSI
 #define DATAIN 12       // CIPO/MISO
@@ -44,52 +45,56 @@ void setup()
 void loop()
 {
 
-    // uint16_t ID = AD4116_readID(CHIPSELECT);
-    // Serial.print("ID: ");
-    // Serial.println(ID, HEX);
+    while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB
+    }
 
-    // uint8_t STATUS = AD4116_readStatus(CHIPSELECT);
-    // Serial.print("Status: ");
-    // Serial.println(STATUS, BIN);
-    // Serial.print("Ready: ");
-    // Serial.println(bitRead(STATUS, 7));
+    uint16_t ID = AD4116_readID(CHIPSELECT);
+    Serial.print("ID: ");
+    Serial.println(ID, HEX);
 
-    // uint16_t GPOIConfig = AD4116_readGPOIConfig(CHIPSELECT);
-    // Serial.print("GPOIConfig: ");
-    // Serial.println(GPOIConfig, BIN);
+    uint8_t STATUS = AD4116_readStatus(CHIPSELECT);
+    Serial.print("Status: ");
+    Serial.println(STATUS, BIN);
+    Serial.print("Ready: ");
+    Serial.println(bitRead(STATUS, 7));
 
-    // uint32_t ChannelOneOffsetRead1 = AD4116_read24(CHIPSELECT, 0b01110000);
-    // Serial.print("ChannelOneOffsetRead1: ");
-    // Serial.println(ChannelOneOffsetRead1, BIN);
+    uint16_t GPOIConfig = AD4116_readGPOIConfig(CHIPSELECT);
+    Serial.print("GPOIConfig: ");
+    Serial.println(GPOIConfig, BIN);
+
+    uint32_t ChannelOneOffsetRead1 = AD4116_read24(spi, CHIPSELECT, 0b01110000);
+    Serial.print("ChannelOneOffsetRead1: ");
+    Serial.println(ChannelOneOffsetRead1, BIN);
     
-    // pinMode(CHIPSELECT,OUTPUT);
+    pinMode(CHIPSELECT,OUTPUT);
     
-    // delay(50);
+    delay(50);
     
-    // spi.setBitOrder(MSBFIRST);
-    // spi.setDataMode(spiMODE3);
+    spi.setBitOrder(MSBFIRST);
+    spi.setDataMode(spiMODE3);
     
-    // digitalWrite(CHIPSELECT,LOW); //enable device
+    digitalWrite(CHIPSELECT,LOW); //enable device
 
-    // delay(150);
+    delay(150);
 
-    // spi.transfer(0b00110000);
-    // if (ChannelOneOffsetRead1 == 0b10000000){
-    //     spi.transfer(0b10000001);
-    //     spi.transfer(0b00000000);
-    //     spi.transfer(0b00000000);
-    // }else {
-    //     spi.transfer(0b10000000);
-    //     spi.transfer(0b00000000);
-    //     spi.transfer(0b00000000);
-    // }
+    spi.transfer(0b00110000);
+    if (ChannelOneOffsetRead1 == 0b10000000){
+        spi.transfer(0b10000001);
+        spi.transfer(0b00000000);
+        spi.transfer(0b00000000);
+    }else {
+        spi.transfer(0b10000000);
+        spi.transfer(0b00000000);
+        spi.transfer(0b00000000);
+    }
     
-    // digitalWrite(CHIPSELECT,HIGH); //disable device
+    digitalWrite(CHIPSELECT,HIGH); //disable device
 
 
-    // uint32_t ChannelOneOffsetRead2 = AD4116_read24(CHIPSELECT, 0b01110000);
-    // Serial.print("ChannelOneOffsetRead2: ");
-    // Serial.println(ChannelOneOffsetRead2, BIN);
+    uint32_t ChannelOneOffsetRead2 = AD4116_read24(spi, CHIPSELECT, 0b01110000);
+    Serial.print("ChannelOneOffsetRead2: ");
+    Serial.println(ChannelOneOffsetRead2, BIN);
 
     Serial.println("___");
 }
@@ -99,7 +104,7 @@ void loop()
 /* Read Chip Address 0x00*/
 uint8_t AD4116_readStatus(uint8_t ChipSelectPin)
 {
-return AD4116_read(ChipSelectPin, 0b01000000);
+return AD4116_read(spi, ChipSelectPin, 0b01000000);
 }
 
 /* Read Chip Address 0x00 Bit 7*/
@@ -113,13 +118,13 @@ boolean AD4116_isReady(uint8_t ChipSelectPin){
 
 /* Read Chip Address 0x06*/
 uint16_t AD4116_readGPOIConfig(uint8_t ChipSelectPin){
-    return AD4116_read16(ChipSelectPin, 0b01000110);
+    return AD4116_read16(spi, ChipSelectPin, 0b01000110);
 }
 
 /* Read Chip Address 0x07*/
 uint16_t AD4116_readID(uint8_t ChipSelectPin)
 {
-return AD4116_read16(ChipSelectPin, 0b01000111);
+return AD4116_read16(spi, ChipSelectPin, 0b01000111);
 }
 
 // uint8_t AD4116_writeChannelSetup(uint8_t ChipSelectPin, uint8_t channel){
@@ -193,7 +198,7 @@ uint8_t AD4116_writeChannelZeroOffset(uint8_t ChipSelectPin, uint8_t channel, ui
     return 0;
 }
 
-uint8_t AD4116_read(uint8_t ChipSelectPin, uint8_t comms)
+uint8_t AD4116_readx(SPIClass& spi, uint8_t ChipSelectPin, uint8_t comms)
 {
 
     pinMode(ChipSelectPin,OUTPUT);
@@ -216,7 +221,7 @@ uint8_t AD4116_read(uint8_t ChipSelectPin, uint8_t comms)
 }
 
 
-uint16_t AD4116_read16(uint8_t ChipSelectPin, uint8_t comms)
+uint16_t AD4116_read16x(SPIClass& spi, uint8_t ChipSelectPin, uint8_t comms)
 {
 
     pinMode(ChipSelectPin,OUTPUT);
@@ -238,7 +243,7 @@ uint16_t AD4116_read16(uint8_t ChipSelectPin, uint8_t comms)
     return results;
 }
 
-uint32_t AD4116_read24(uint8_t ChipSelectPin, uint8_t comms)
+uint32_t AD4116_read24x(SPIClass& spi, uint8_t ChipSelectPin, uint8_t comms)
 {
 
     pinMode(ChipSelectPin,OUTPUT);
